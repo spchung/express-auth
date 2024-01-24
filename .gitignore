@@ -1,0 +1,4 @@
+.env
+memo.txt
+node_modules
+docker-compose.yml
