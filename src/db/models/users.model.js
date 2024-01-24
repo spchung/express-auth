@@ -28,6 +28,14 @@ const UserModel = {
         type: DataTypes.INTEGER,
         allowNull: false,
     },
+    emailVerified: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+    },
+    loginTypeId: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+    },
     createdAt:{
         type: DataTypes.DATE,
         allowNull: false,

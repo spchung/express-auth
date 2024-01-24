@@ -9,10 +9,6 @@ app.get('/', (req, res) => {
     res.status(200).sendFile('index.html'); 
 });
 
-app.get('/2', (req, res) => {
-    res.status(200).send('Hello World!'); 
-});
-
 // app.post
 const routes = require('./src/routes/v1');
 app.use('/v1', routes)

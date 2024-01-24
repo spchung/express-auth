@@ -14,7 +14,13 @@ function authenticateToken(req, res, next) {
             return res.status(403).send({
                 message: 'Forbidden',
             });
+        };
+        if (!user) {
+            return res.status(403).send({
+                message: 'Email Not Verified',
+            });
         }
+        
         req.user = user;
         next();
     });

@@ -1,6 +1,6 @@
 const config = require('../config/config');
 const db = require('../db/models');
-const cryptService = require('./crypt.service');
+const cryptService  = require('./crypt.service');
 
 async function getUserByEmail(email) {
     const user = await db.user.findOne({
@@ -17,8 +17,18 @@ async function createUser(email, password, firstName, lastName) {
         password: hash,
         firstName: firstName,
         lastName: lastName,
-        createdAt: new Date(),
+        emailVerified: false,
         userRoleId: 2, // regular user
+        loginTypeId: 1, // email login
+        createdAt: new Date(),
+    });
+
+    return user;
+}
+
+async function updateUser(id, data) {
+    const user = await db.user.update(data, {
+        where: { id },
     });
     return user;
 }
@@ -34,5 +44,6 @@ async function listRoles() {
 module.exports = {
     getUserByEmail,
     createUser,
-    listRoles
+    listRoles,
+    updateUser
 }
