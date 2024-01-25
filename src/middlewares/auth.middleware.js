@@ -1,5 +1,5 @@
 const jwt = require('jsonwebtoken');
-const { tokenService } = require('../services');
+const { tokenService, userActionService } = require('../services');
 const config = require('../config/config');
 
 function _parseCookie(rawCookie) {
@@ -28,6 +28,7 @@ function authenticateToken(req, res, next) {
             // validate refresh token
             const { user_id } = tokenService.extractJWTData(sessionToken, config.jwt.sessionTokenSecret);
             if (!user_id) {
+                // must sign in again
                 return res.status(403).send({
                     message: 'Forbidden',
                 });

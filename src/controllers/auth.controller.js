@@ -1,5 +1,5 @@
 const config = require('../config/config');
-const { userService, cryptService, tokenService, mailService } = require('../services');
+const { userService, cryptService, tokenService, mailService, userActionService } = require('../services');
 
 const loginWithEmailPassword = async (req, res) => {
     const { email, password } = req.body;
@@ -25,7 +25,7 @@ const loginWithEmailPassword = async (req, res) => {
         });
     }
     
-    // generate token
+    // generate tokens
     const token = tokenService.generateToken({
         user_id: user.id,
         user_role: user.userRoleId,
@@ -36,9 +36,14 @@ const loginWithEmailPassword = async (req, res) => {
         user_role: user.userRoleId,
     }, config.jwt.sessionTokenExpires, config.jwt.sessionTokenSecret);
     
+    // set cookies
     res.cookie('accessToken', token, { maxAge: config.jwt.cookieMaxAge });
     res.cookie('sessionToken', sessionToken, { maxAge: config.jwt.cookieMaxAge });
-
+    
+    // log user action 
+    userActionService.logInAction(user.id);
+    userActionService.sessionAction(user.id);
+    
     return res.status(200).send({user});
 };
 
@@ -50,6 +55,7 @@ const confirmEmailCallback = async (req, res) => {
         message: 'Email Confirmed',
     });
 };
+
 /*
     email: body
 */
@@ -84,7 +90,13 @@ const resetPasswordCallback = async (req, res) => {
         });
     }
     const { password } = req.body;
+    if (!password){
+        return res.status(400).send({
+            message: 'Invalid Password',
+        });
+    }
     
+    // password strength validation
     try{
         cryptService.validatePasswordStrength(password);
     }catch (error){
@@ -93,13 +105,13 @@ const resetPasswordCallback = async (req, res) => {
         });
     };
 
-    if (!password){
-        return res.status(400).send({
-            message: 'Invalid Password',
-        });
-    }
+    // update user password
     const hash = await cryptService.asyncGeneratePassword(password);
     await userService.updateUser(user_id, { password: hash });
+    
+    // log action
+    userActionService.resetPasswordAction(user_id);
+    
     res.status(200).send({
         message: 'Password Reset Successful',
     });

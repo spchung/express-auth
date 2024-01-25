@@ -1,4 +1,4 @@
-const { userService, mailService, tokenService, cryptService} = require('../services');
+const { userService, mailService, tokenService, cryptService, userActionService} = require('../services');
 const config = require('../config/config');
 
 const getUserByEmail = async (req, res) => {
@@ -22,7 +22,8 @@ const createNewUser = async (req, res) => {
         firstName, 
         lastName,
     );
-
+    
+    // validate password
     try{
         cryptService.validatePasswordStrength(password);
     }catch (error){
@@ -31,6 +32,7 @@ const createNewUser = async (req, res) => {
         });
     }
 
+    // send confirmation email
     const confirmationToken = tokenService.generateToken(
         { user_id: user.id, }, 
         config.jwt.confirmationExpires,
@@ -41,7 +43,11 @@ const createNewUser = async (req, res) => {
         'Confirm your email',
         `Please confirm your email by clicking on the following link: ${config.domain}/auth/confirm/${confirmationToken}`
     );
-    res.status(201).send(user);
+    
+    // log user action
+    userActionService.signUpAction(user.id);
+    
+    return res.status(201).send(user);
 }
 
 module.exports = {
