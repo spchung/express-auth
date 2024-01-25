@@ -1,4 +1,4 @@
-const { userService, mailService, tokenService } = require('../services');
+const { userService, mailService, tokenService, cryptService} = require('../services');
 const config = require('../config/config');
 
 const getUserByEmail = async (req, res) => {
@@ -22,14 +22,20 @@ const createNewUser = async (req, res) => {
         firstName, 
         lastName,
     );
+
+    try{
+        cryptService.validatePasswordStrength(password);
+    }catch (error){
+        return res.status(400).send({
+            message: error.message,
+        });
+    }
+
     const confirmationToken = tokenService.generateToken(
         { user_id: user.id, }, 
         config.jwt.confirmationExpires,
         config.jwt.confirmationSecret
     );
-
-    // console.log("Confirmation token: ", confirmationToken)
-
     await mailService.asyncSendEmail(
         email,
         'Confirm your email',

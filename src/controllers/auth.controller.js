@@ -84,6 +84,15 @@ const resetPasswordCallback = async (req, res) => {
         });
     }
     const { password } = req.body;
+    
+    try{
+        cryptService.validatePasswordStrength(password);
+    }catch (error){
+        return res.status(400).send({
+            message: error.message,
+        });
+    };
+
     if (!password){
         return res.status(400).send({
             message: 'Invalid Password',
@@ -96,9 +105,25 @@ const resetPasswordCallback = async (req, res) => {
     });
 }
 
+/*
+    password: body
+*/ 
+const checkPasswordStrength = async (req, res)  => {
+    const { password } = req.body;
+    try{
+        cryptService.validatePasswordStrength(password);
+    }catch (error){
+        return res.status(400).send({
+            message: error.message,
+        });
+    }
+    return res.status(200).send({});
+}
+
 module.exports = {
     loginWithEmailPassword,
     confirmEmailCallback,
     resetPasswordRequest,
-    resetPasswordCallback
+    resetPasswordCallback,
+    checkPasswordStrength
 }
