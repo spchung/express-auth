@@ -29,10 +29,17 @@ const loginWithEmailPassword = async (req, res) => {
     const token = tokenService.generateToken({
         user_id: user.id,
         user_role: user.userRoleId,
-    }, config.jwt.expirationTime);
+    }, config.jwt.accessTokeExpires);
+
+    const sessionToken = tokenService.generateToken({
+        user_id: user.id,
+        user_role: user.userRoleId,
+    }, config.jwt.sessionTokenExpires, config.jwt.sessionTokenSecret);
     
-    res.cookie('authToken', token, { maxAge: config.jwt.cookieMaxAge });
-    return res.status(200).send({user, token});
+    res.cookie('accessToken', token, { maxAge: config.jwt.cookieMaxAge });
+    res.cookie('sessionToken', sessionToken, { maxAge: config.jwt.cookieMaxAge });
+
+    return res.status(200).send({user});
 };
 
 const confirmEmailCallback = async (req, res) => {

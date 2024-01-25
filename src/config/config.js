@@ -12,8 +12,10 @@ module.exports = {
         port: process.env.POSTGRES_PORT,
     },
     jwt: {
-        secret: process.env.JWT_SECRET,
-        expirationTime: process.env.JWT_EXPIRATION_TIME,
+        accessTokenSecret: process.env.JWT_SECRET,
+        accessTokeExpires: process.env.JWT_EXPIRATION_TIME,
+        sessionTokenSecret: process.env.SESSION_JWT_SECRET,
+        sessionTokenExpires: process.env.SESSION_JWT_EXPIRATION_TIME,
         resetPasswordSecret: process.env.RESET_JWT_SECRET,
         resetPasswordExpires: process.env.RESET_JWT_EXPIRATION_TIME,
         confirmationSecret: process.env.CONFIRMATION_JWT_SECRET,

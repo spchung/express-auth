@@ -28,7 +28,7 @@ const createNewUser = async (req, res) => {
         config.jwt.confirmationSecret
     );
 
-    console.log("Confirmation token: ", confirmationToken)
+    // console.log("Confirmation token: ", confirmationToken)
 
     await mailService.asyncSendEmail(
         email,
