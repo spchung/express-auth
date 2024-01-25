@@ -14,10 +14,11 @@ module.exports = {
     jwt: {
         secret: process.env.JWT_SECRET,
         expirationTime: process.env.JWT_EXPIRATION_TIME,
-        resetPasswordSecret: process.env.RESET_JWT_PASSWORD_SECRET,
+        resetPasswordSecret: process.env.RESET_JWT_SECRET,
         resetPasswordExpires: process.env.RESET_JWT_EXPIRATION_TIME,
         confirmationSecret: process.env.CONFIRMATION_JWT_SECRET,
         confirmationExpires: process.env.CONFIRMATION_JWT_EXPIRATION_TIME,
+        cookieMaxAge: process.env.COOKIE_MAX_AGE,
     },
     mail: {
         googleAppPass: process.env.GOOGLE_APP_PASS,
