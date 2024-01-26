@@ -1,4 +1,5 @@
 const config = require('../config/config');
+const { passport } = require('../utils');
 const { userService, cryptService, tokenService, mailService, userActionService } = require('../services');
 
 const loginWithEmailPassword = async (req, res) => {
@@ -132,10 +133,24 @@ const checkPasswordStrength = async (req, res)  => {
     return res.status(200).send({});
 }
 
+/*
+    google oauth
+*/
+const googleCallback = async (req, res) => {
+    res.send({
+        status: true,
+        data: {
+        id: req.user.id,
+        name: req.user.displayName
+        }
+    });
+}
+
 module.exports = {
     loginWithEmailPassword,
     confirmEmailCallback,
     resetPasswordRequest,
     resetPasswordCallback,
-    checkPasswordStrength
+    checkPasswordStrength,
+    googleCallback,
 }
