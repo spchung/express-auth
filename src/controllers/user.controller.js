@@ -16,7 +16,7 @@ const getUserByEmail = async (req, res) => {
 
 const createNewUser = async (req, res) => {
     const { email, password, firstName, lastName } = req.body;
-    const user = await userService.createUser(
+    const user = await userService.createCustomUser(
         email, 
         password, 
         firstName, 
@@ -46,7 +46,6 @@ const createNewUser = async (req, res) => {
     
     // log user action
     userActionService.signUpAction(user.id);
-    
     return res.status(201).send(user);
 }
 

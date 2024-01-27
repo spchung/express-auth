@@ -36,6 +36,10 @@ const UserModel = {
         type: DataTypes.INTEGER,
         allowNull: false,
     },
+    oAuthId: {
+        type: DataTypes.STRING,
+        allowNull: true,
+    },
     createdAt:{
         type: DataTypes.DATE,
         allowNull: false,

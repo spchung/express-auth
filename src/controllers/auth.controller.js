@@ -1,5 +1,4 @@
 const config = require('../config/config');
-const { passport } = require('../utils');
 const { userService, cryptService, tokenService, mailService, userActionService } = require('../services');
 
 const loginWithEmailPassword = async (req, res) => {
@@ -137,13 +136,35 @@ const checkPasswordStrength = async (req, res)  => {
     google oauth
 */
 const googleCallback = async (req, res) => {
-    res.send({
-        status: true,
-        data: {
-        id: req.user.id,
-        name: req.user.displayName
-        }
-    });
+    const email = req?.user?.email; // the user info from google
+    if (!email) {
+        return res.status(401).send({
+            message: 'Unauthorized',
+        });
+    }
+    let user = await userService.getUserByEmail(email);
+    if (!user) {
+        // create new user
+        user = await userService.createGoogleUser(
+            email,
+            req?.user?.given_name,
+            req?.user?.family_name,
+            oAuthId = req?.user?.sub,
+        );
+    }
+    // generate tokens
+    const token = tokenService.generateToken({
+        user_id: user.id,
+        user_role: user.userRoleId,
+    }, config.jwt.accessTokeExpires);
+    const sessionToken = tokenService.generateToken({
+        user_id: user.id,
+        user_role: user.userRoleId,
+    }, config.jwt.sessionTokenExpires, config.jwt.sessionTokenSecret);
+
+    res.cookie('accessToken', token, { maxAge: config.jwt.cookieMaxAge });
+    res.cookie('sessionToken', sessionToken, { maxAge: config.jwt.cookieMaxAge });
+    return res.redirect ('/');
 }
 
 module.exports = {
