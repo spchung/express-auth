@@ -10,6 +10,14 @@ async function getUserByEmail(email) {
     return user;
 }
 
+async function getUserById(id) {
+    const user = await db.user.findOne({
+        where: { id },
+        raw: true,
+    });
+    return user;
+}
+
 // custom password
 async function createCustomUser(email, password, firstName, lastName) {
     const hash = await cryptService.asyncGeneratePassword(password);
@@ -62,5 +70,6 @@ module.exports = {
     createCustomUser,
     createGoogleUser,
     listRoles,
-    updateUser
+    updateUser,
+    getUserById
 }

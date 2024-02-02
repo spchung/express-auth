@@ -1,16 +1,21 @@
 const { userService, mailService, tokenService, cryptService, userActionService} = require('../services');
 const config = require('../config/config');
 
-const getUserByEmail = async (req, res) => {
-    const { email } = req.params;
-    const user = await userService.getUserByEmail(email);
+const getUserInfo = async (req, res) => {
+    const id = req.user_id;
+    if (!id) {
+        return res.status(401).send({
+            message: 'Redirect',
+        });
+    }
+    const user = await userService.getUserById(id);
     if (!user) {
         return res.status(404).send({
             message: 'User Not Found',
         });
     }
-    delete user.password;
-    delete user.userRoleId;
+    delete user.password
+    delete user.user
     res.status(200).send(user);
 }
 
@@ -50,6 +55,6 @@ const createNewUser = async (req, res) => {
 }
 
 module.exports = {
-    getUserByEmail,
+    getUserInfo,
     createNewUser
 }

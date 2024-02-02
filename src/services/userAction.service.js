@@ -5,7 +5,7 @@ const actions = {
     LOG_IN: 1,
     RESET_PASSWORD: 2,
     SIGN_UP: 3,
-    SESSION: 4, //new session token generated
+    REFRESH_TOKEN: 4, //new session token generated
 }
 
 const logUserAction = async function (userId, actionTypeId) {
@@ -30,8 +30,8 @@ const signUpAction = async function(userId) {
     return userAction;
 }
 
-const sessionAction = async function(userId) {
-    const userAction = await logUserAction(userId, actions.SESSION);
+const refresnTokenAction = async function(userId) {
+    const userAction = await logUserAction(userId, actions.REFRESH_TOKEN);
     return userAction;
 }
 
@@ -39,5 +39,6 @@ module.exports = {
     logInAction,
     resetPasswordAction,
     signUpAction,
-    sessionAction,
+    refresnTokenAction,
+    actions
 }

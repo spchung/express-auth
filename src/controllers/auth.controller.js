@@ -31,18 +31,18 @@ const loginWithEmailPassword = async (req, res) => {
         user_role: user.userRoleId,
     }, config.jwt.accessTokeExpires);
 
-    const sessionToken = tokenService.generateToken({
+    const refreshToken = tokenService.generateToken({
         user_id: user.id,
         user_role: user.userRoleId,
-    }, config.jwt.sessionTokenExpires, config.jwt.sessionTokenSecret);
+    }, config.jwt.refreshTokenExpires, config.jwt.refreshTokenSecret);
     
     // set cookies
-    res.cookie('accessToken', token, { maxAge: config.jwt.cookieMaxAge });
-    res.cookie('sessionToken', sessionToken, { maxAge: config.jwt.cookieMaxAge });
+    await tokenService.saveTokenPair(token, refreshToken, user.id);
     
     // log user action 
-    userActionService.logInAction(user.id);
-    userActionService.sessionAction(user.id);
+    await userActionService.logInAction(user.id);
+    await userActionService.refresnTokenAction(user.id);
+    res.cookie('accessToken', token, { maxAge: config.jwt.cookieMaxAge });
     
     return res.status(200).send({user});
 };
@@ -157,14 +157,19 @@ const googleCallback = async (req, res) => {
         user_id: user.id,
         user_role: user.userRoleId,
     }, config.jwt.accessTokeExpires);
-    const sessionToken = tokenService.generateToken({
+
+    const refreshToken = tokenService.generateToken({
         user_id: user.id,
         user_role: user.userRoleId,
-    }, config.jwt.sessionTokenExpires, config.jwt.sessionTokenSecret);
+    }, config.jwt.refreshTokenExpires, config.jwt.refreshTokenSecret);
 
     res.cookie('accessToken', token, { maxAge: config.jwt.cookieMaxAge });
-    res.cookie('sessionToken', sessionToken, { maxAge: config.jwt.cookieMaxAge });
-    return res.redirect ('/');
+    await tokenService.saveTokenPair(token, refreshToken, user.id);
+    
+    // log action
+    await userActionService.logInAction(user.id);
+    await userActionService.refresnTokenAction(user.id);
+    return res.redirect('/');
 }
 
 module.exports = {

@@ -1,5 +1,5 @@
 const { authController } = require('../../controllers');
-const { authenticateToken } = require('../../middlewares');
+const { authenticateToken,  } = require('../../middlewares');
 const express = require('express');
 
 const { authService } = require('../../services');

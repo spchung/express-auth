@@ -14,8 +14,8 @@ module.exports = {
     jwt: {
         accessTokenSecret: process.env.JWT_SECRET,
         accessTokeExpires: process.env.JWT_EXPIRATION_TIME,
-        sessionTokenSecret: process.env.SESSION_JWT_SECRET,
-        sessionTokenExpires: process.env.SESSION_JWT_EXPIRATION_TIME,
+        refreshTokenSecret: process.env.REFRESH_JWT_SECRET,
+        refreshTokenExpires: process.env.REFRESH_JWT_EXPIRATION_TIME,
         resetPasswordSecret: process.env.RESET_JWT_SECRET,
         resetPasswordExpires: process.env.RESET_JWT_EXPIRATION_TIME,
         confirmationSecret: process.env.CONFIRMATION_JWT_SECRET,

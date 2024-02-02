@@ -1,5 +1,6 @@
-const { authenticateToken } = require('./auth.middleware');
+const { authenticateToken, asyncAuthenticateToken } = require('./auth.middleware');
 
 module.exports = {
-    authenticateToken
+    authenticateToken,
+    asyncAuthenticateToken
 }

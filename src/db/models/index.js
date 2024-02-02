@@ -6,6 +6,7 @@ const userModel = require('./users.model');
 const userRoleModel = require('./userRoles.model');
 const userActionModel = require('./userActions.model');
 const actionTypeModel = require('./actionTypes.model');
+const tokenModel = require('./token.model');
 
 const sequelize = new Sequelize(
     config.postgres.database,
@@ -32,6 +33,7 @@ const db = {
     userRole: sequelize.define(userRoleModel.name, userRoleModel.model),
     userAction: sequelize.define(userActionModel.name, userActionModel.model),
     actionType: sequelize.define(actionTypeModel.name, actionTypeModel.model),
+    token: sequelize.define(tokenModel.name, tokenModel.model),
 }
 
 module.exports = db;
