@@ -21,25 +21,15 @@ function authenticateToken(req, res, next) {
     const token = authHeader && authHeader.split(' ')[1];
     if (!token) {
         return res.status(401).send({
-            message: 'Unauthorized',
+            message: 'Unauthorized: No accessToken',
         });
     }
-
     jwt.verify(token, config.jwt.accessTokenSecret, (err, decoded) => {
         if (err) {
-            // get new access token
-            const cookies = _parseCookie(req.headers['cookie']);
-            // must sign in again
-            if (!cookies.accessToken) {
-                return res.status(401).send({
-                    message: 'Redirect',
-                });
-            }
-            
             // fetch refresh token
             tokenService.getRefreshTokenFromAccessToken(token).then((tokenModel) => {
                 if (!tokenModel){
-                    throw new Error('RefreshToken Expired');
+                    throw new Error('No Refresh Token Found');
                 }
                 return tokenModel.refreshToken;
             }).then((refreshToken) => {
@@ -49,8 +39,7 @@ function authenticateToken(req, res, next) {
                     db.token.destroy({
                         where: { refreshToken }
                     }).then(() => {
-                        console.log("destroied")
-                        throw new Error('RefreshToken Expired');
+                        throw new Error('RefreshToken Expired or Invalid');
                     });
                 }
                 // gnenerate new access token
@@ -77,13 +66,18 @@ function authenticateToken(req, res, next) {
             }).catch((err) => {
                 console.log(err);
                 return res.status(403).send({
-                    message: 'Redirect',
+                    message: `Redirect: ${err.message}`,
                 });
             });
         }
-        else {
+        else if (decoded?.user_id){
             req.user_id = decoded.user_id;
             next();
+        }
+        else {
+            return res.status(401).send({
+                message: 'Unauthorized: Invalid Token',
+            });
         }
     });
 }
