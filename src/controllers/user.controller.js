@@ -16,7 +16,8 @@ const getUserInfo = async (req, res) => {
     }
     delete user.password
     delete user.user
-    res.status(200).send(user);
+
+    return res.status(200).send(user);
 }
 
 const createNewUser = async (req, res) => {

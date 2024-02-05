@@ -1,5 +1,6 @@
 const config = require('../config/config');
 const { userService, cryptService, tokenService, mailService, userActionService } = require('../services');
+const { helpers } = require('../utils');
 
 const loginWithEmailPassword = async (req, res) => {
     const { email, password } = req.body;
@@ -46,6 +47,15 @@ const loginWithEmailPassword = async (req, res) => {
     
     return res.status(200).send({user});
 };
+
+const signout = async (req, res) => {
+    const token = req.authToken;
+    await tokenService.blackListToken(token);
+    res.clearCookie('accessToken');
+    res.status(200).send({
+        message: 'Sign Out Successful',
+    });
+}
 
 const confirmEmailCallback = async (req, res) => {
     const { token } = req.params;
@@ -179,4 +189,5 @@ module.exports = {
     resetPasswordCallback,
     checkPasswordStrength,
     googleCallback,
+    signout
 }

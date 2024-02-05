@@ -7,6 +7,7 @@ const userRoleModel = require('./userRoles.model');
 const userActionModel = require('./userActions.model');
 const actionTypeModel = require('./actionTypes.model');
 const tokenModel = require('./token.model');
+const tokenBlacklistModel = require('./tokenBlacklist.model');
 
 const sequelize = new Sequelize(
     config.postgres.database,
@@ -28,12 +29,12 @@ try {
 
 
 const db = {
-    // user 
     user: sequelize.define(userModel.name, userModel.model),
     userRole: sequelize.define(userRoleModel.name, userRoleModel.model),
     userAction: sequelize.define(userActionModel.name, userActionModel.model),
     actionType: sequelize.define(actionTypeModel.name, actionTypeModel.model),
     token: sequelize.define(tokenModel.name, tokenModel.model),
+    tokenBlacklist: sequelize.define(tokenBlacklistModel.name, tokenBlacklistModel.model),
 }
 
 module.exports = db;

@@ -48,12 +48,54 @@ async function updateAssessToken(token, refreshToken) {
     return newToken;
 }
 
+async function updateTokenPair(oldAccessToken, newAccessToken, newRefreshToken) {
+    const tokenPair = await db.token.update({
+        accessToken: newAccessToken,
+        refreshToken: newRefreshToken,
+    }, {
+        where: { 
+            accessToken: oldAccessToken,
+        },
+    });
+    return tokenPair;
+
+}
+
 async function getRefreshTokenFromAccessToken(accessToken) {
     const token = await db.token.findOne({
         where: { accessToken: accessToken },
         raw: true,
     });
+    if (!token) {
+        return null;
+    }
+    return token.refreshToken;
+}
+
+async function blackListToken(token) {
+    const blackList = await db.tokenBlacklist.create({
+        token,
+        createdAt: new Date(),
+    });
+    return blackList;
+}
+
+async function deleteToken(accessToken) {
+    const token = await db.token.destroy({
+        where: {
+            accessToken,
+        },
+    });
     return token;
+}
+
+async function tokenIsBlacklisted(token) {
+    const blackList = await db.tokenBlacklist.findOne({
+        where: {
+            token,
+        },
+    });
+    return blackList !== null;
 }
 
 module.exports = {
@@ -63,5 +105,9 @@ module.exports = {
     extractJWTData,
     saveTokenPair,
     updateAssessToken,
-    getRefreshTokenFromAccessToken
+    getRefreshTokenFromAccessToken,
+    deleteToken,
+    blackListToken,
+    tokenIsBlacklisted,
+    updateTokenPair
 }
